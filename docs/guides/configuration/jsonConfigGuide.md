@@ -27,7 +27,7 @@ The JSON reader streams objects and arrays iteratively in order of their discove
 * `statistics_group` must appear *after* `components`.  The `statistics_group` reference component objects that must be present in the SST config graph
 * For each `component` or `subcomponent` object, the `name` and `type` values must appear before any other values.  This ensures that the parser can create the component or subcomponet objects before adding parameters or statistics values to the resident config graph object.
 
-## Generating JSON Configuration Files from Python
+## Generating JSON Configuration Files
 
 SST can output its configuration graph as a JSON file from any Python configuration script using the `--output-json` option. This is useful for inspecting the configuration, reproducing runs without the Python interpreter, or loading configurations in parallel. The `--run-mode=init` option can be used in conjunction to build the configuration graph and write the JSON file without executing the simulation.
 
@@ -75,14 +75,14 @@ The generated `test_StatisticsComponent_basic.json` corresponds to [JSON Configu
 
 #### test_ParallelLoad.py
 
-For simulations that use multiple MPI ranks, JSON files can be generated using `mpiexec` with the `--parallel-load=SINGLE` option. This ensures all ranks process the same Python configuration file and the resulting JSON captures the full partitioned configuration graph.
+For simulations that use multiple MPI ranks, JSON files can be generated using `mpirun` with the `--parallel-load=SINGLE` option. This ensures all ranks process the same Python configuration file and the resulting JSON captures the full partitioned configuration graph.
 
 When using `--parallel-output`, each MPI rank will generate its own JSON file with a rank number suffix (e.g., `test_ParallelLoad0.json`, `test_ParallelLoad1.json`). Each file contains only the components and links assigned to that specific rank.
 
 Generate JSON configuration files with 2 MPI ranks:
 
 ```bash
-mpiexec -n 2 sst --parallel-load=SINGLE --parallel-output --output-json=test_ParallelLoad.json --run-mode=init test_ParallelLoad.py
+mpirun -np 2 sst --parallel-load=SINGLE --parallel-output --output-json=test_ParallelLoad.json --run-mode=init test_ParallelLoad.py
 ```
 
 This will create two files:
@@ -92,7 +92,7 @@ This will create two files:
 Run the simulation using the generated JSON files with 2 MPI ranks:
 
 ```bash
-mpiexec -n 2 sst --parallel-load test_ParallelLoad.json
+mpirun -np 2 sst --parallel-load test_ParallelLoad.json
 ```
 
 Note: When loading in parallel, SST will automatically append the rank number to find the correct JSON file for each rank.
